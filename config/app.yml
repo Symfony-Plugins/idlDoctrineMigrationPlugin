@@ -1,0 +1,5 @@
+#all:
+#  idl_doctrine_migration:
+#    custom_generator:
+#      form:               sfDoctrineFormGenerator
+#      filter:             sfDoctrineFormFilterGenerator

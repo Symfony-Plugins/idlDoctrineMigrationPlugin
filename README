@@ -1,0 +1,49 @@
+idlDoctrineMigrationPlugin
+==========================
+
+The `idlDoctrineMigrationPlugin` provide two useful task to manage your model migration.
+
+Doing the migration with the base doctrine tools is possible but could cause some problem, especialy when multiple developers work on the same project. Typical issues can be:
+ 
+ * Changing the schema.yml but forgetting to generate migration scripts
+ * Updating the model, but forgetting to migrate database, so models get inconsistent
+ * Even worst, generating migration script and then changing model class, so then the migration script become invalid
+ 
+Using this plugin's tasks will help you to avoid those kind of problems.
+
+Installation
+------------
+
+    $ symfony plugin:install idlDoctrineMigrationPlugin
+
+Documentation
+-------------
+
+The key concept around this plugin is to always perform model diff on schema.yml. Diff around database or model seems to be error prone, and as schema.yml is for most of us the main reference about the model, that's prefect.
+
+So then the first task to use is:
+    
+    $ symfony model:diff
+
+When you change any schema.yml in your projet, or when you install a new plugin, run it. This task will generate the migration scripts to go from the previous schema.yml to the current one. If scripts have been generated, then current schema.yml is archived in /data/migration/history, and then can be reuse for next script generation. If there is not pending modifications, nothing is done.
+The first time you run the task, as there is no schema history, the generated migration script will contain all the database construction.
+
+
+Once you have generate migration script, you need to update your model and database, for this call:
+
+    $ symfony model:update [--reload]
+
+This task is safer than the traditional ``doctrine:build`` tasks as it will execute the following actions:
+ 
+ * First check if your migration scripts are up-to-date. If no, force you to run first the model:diff task
+ * Recreate an empty db if you have set the --reload option
+ * Migrate the database if require (using the task sw:migrate from Thomas Rabaix)
+ * Regenerate code for model/form/filter
+ * Load the fixtures if you set the --reload option
+ 
+By following this simple workfollow, and always updating the database or model using ``model:update`` task, you will always have a coherent project state.  
+
+How to contribute
+-----------------
+
+If you want to contribute please fell free to send your comment, and to share your pratices arround doctrine migration. We will be happy to complete this plugin according to your needs...

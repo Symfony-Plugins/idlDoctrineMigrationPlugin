@@ -1,0 +1,1 @@
+<?php // This empty file is require for the initial call to model:diff
